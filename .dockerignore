@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+
+# Gradle
+.gradle
+build
+*/build
+
+# IDE
+.idea
+*.iml
+.vscode
+.settings
+.classpath
+.project
+
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+.next
+dist
+out
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage
+.nyc_output
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+*.md
+!README.md
+
+# Logs
+*.log
+
+# Temporary files
+tmp
+temp
+*.tmp
+

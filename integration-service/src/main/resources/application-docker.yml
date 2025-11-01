@@ -1,0 +1,46 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: integration-service
+  
+  datasource:
+    url: jdbc:postgresql://postgres:5432/membership_db
+    username: ${SPRING_DATASOURCE_USERNAME:membership_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:membership_pass}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+eureka:
+  instance:
+    hostname: integration-service
+    prefer-ip-address: false
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# 外部デバイス連携設定
+integration:
+  golf-simulator:
+    enabled: ${INTEGRATION_GOLF_SIMULATOR_ENABLED:true}
+    api-url: ${INTEGRATION_GOLF_SIMULATOR_API_URL:http://localhost:9001}
+    timeout: ${INTEGRATION_GOLF_SIMULATOR_TIMEOUT:30000}
+  hydrogen-water:
+    enabled: ${INTEGRATION_HYDROGEN_WATER_ENABLED:true}
+    api-url: ${INTEGRATION_HYDROGEN_WATER_API_URL:http://localhost:9002}
+    timeout: ${INTEGRATION_HYDROGEN_WATER_TIMEOUT:30000}
+
