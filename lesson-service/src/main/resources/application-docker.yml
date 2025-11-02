@@ -6,7 +6,7 @@ spring:
     name: lesson-service
   
   datasource:
-    url: jdbc:postgresql://postgres:5432/membership_db
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/membership_db}
     username: ${SPRING_DATASOURCE_USERNAME:membership_user}
     password: ${SPRING_DATASOURCE_PASSWORD:membership_pass}
     driver-class-name: org.postgresql.Driver

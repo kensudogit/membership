@@ -130,3 +130,42 @@
   }
 }
 
+/* 高コントラストモード対応（新しい標準） */
+@media (prefers-contrast: high) {
+  :root {
+    --border: 214.3 31.8% 50%;
+  }
+  
+  .dark {
+    --border: 217.2 32.6% 70%;
+  }
+}
+
+/* 強制カラーモード対応（Windows 11以降） */
+@media (forced-colors: active) {
+  * {
+    forced-color-adjust: auto;
+  }
+  
+  .glass,
+  .glass-dark {
+    border: 2px solid;
+    background: transparent;
+    backdrop-filter: none;
+  }
+  
+  .gradient-text {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
+  }
+  
+  button,
+  a,
+  input {
+    border: 1px solid ButtonBorder;
+  }
+}
+
