@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Building2, Search, MapPin, Users, DollarSign, Calendar, Plus, Edit2, Trash2, Save, ChevronLeft, ChevronRight, BarChart3 } from 'lucide-react';
+import { Building2, Search, MapPin, Users, DollarSign, Calendar, Plus, Edit2, Trash2, Save, ChevronLeft, ChevronRight, BarChart3, XCircle } from 'lucide-react';
 
 interface Store {
   id: number;

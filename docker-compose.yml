@@ -37,7 +37,7 @@ services:
       retries: 3
       start_period: 40s
 
-  # Config Server
+  # Config Server (optional - can be disabled if not needed)
   config-server:
     build:
       context: .
@@ -49,6 +49,7 @@ services:
       - eureka-server
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - membership-network
     healthcheck:
@@ -57,6 +58,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    restart: unless-stopped
 
   # Membership Service
   membership-service:
@@ -205,7 +207,7 @@ services:
       dockerfile: api-gateway/Dockerfile
     container_name: membership-api-gateway
     ports:
-      - "8080:8080"
+      - "8086:8080"
     depends_on:
       - eureka-server
       - membership-service
@@ -232,7 +234,7 @@ services:
       dockerfile: Dockerfile
     container_name: membership-frontend
     ports:
-      - "3000:3000"
+      - "3002:3000"
     depends_on:
       - api-gateway
     environment:
