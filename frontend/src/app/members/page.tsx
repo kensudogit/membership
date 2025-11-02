@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { Plus, Search, Filter, UserPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import { apiClient } from '@/lib/api';
 
 interface Member {
   id: number;
@@ -30,7 +31,7 @@ export default function MembersPage() {
 
   const fetchMembers = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/members?page=0&size=20');
+      const response = await apiClient.get('/api/members?page=0&size=20');
       setMembers(response.data.content || []);
     } catch (error) {
       console.error('Failed to fetch members:', error);
@@ -56,13 +57,29 @@ export default function MembersPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
+            className="flex items-center gap-4"
           >
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-              会員管理
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              会員情報の登録・管理・検索
-            </p>
+            <motion.div
+              className="relative w-16 h-16"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Image
+                src="/PC.png"
+                alt="PC"
+                width={64}
+                height={64}
+                className="object-contain"
+              />
+            </motion.div>
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                会員管理
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                会員情報の登録・管理・検索
+              </p>
+            </div>
           </motion.div>
           <motion.button
             initial={{ opacity: 0, scale: 0.9 }}
