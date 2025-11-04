@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { LogIn, Search, QrCode, Clock, Calendar, Filter } from 'lucide-react';
+import { LogIn, Search, QrCode, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 
 interface AttendanceRecord {
@@ -23,14 +23,20 @@ export default function AttendancePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     fetchAttendance();
   }, [filterDate]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterDate, filterStatus]);
+
   const fetchAttendance = async () => {
     try {
-      const mockRecords: AttendanceRecord[] = Array.from({ length: 20 }, (_, i) => {
+      const mockRecords: AttendanceRecord[] = Array.from({ length: 50 }, (_, i) => {
         const checkInTime = new Date();
         checkInTime.setHours(10 + (i % 8), Math.floor(Math.random() * 60), 0);
         const checkOutTime = i % 3 === 0 ? undefined : new Date(checkInTime);
@@ -86,11 +92,24 @@ export default function AttendancePage() {
     return matchesSearch && matchesStatus && matchesDate;
   });
 
+  // ページネーション計算
+  const totalPages = Math.ceil(filteredRecords.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedRecords = filteredRecords.slice(startIndex, endIndex);
+
   const currentVisitors = attendanceRecords.filter((r) => r.status === 'CHECKED_IN').length;
   const todayVisitors = attendanceRecords.filter((r) => {
     const recordDate = new Date(r.checkInTime).toISOString().split('T')[0];
     return recordDate === new Date().toISOString().split('T')[0];
   }).length;
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-teal-50 via-green-50 to-emerald-50 dark:from-gray-950 dark:via-teal-950 dark:to-green-950">
@@ -248,7 +267,7 @@ export default function AttendancePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredRecords.map((record, index) => (
+                  {paginatedRecords.map((record, index) => (
                     <motion.tr
                       key={record.id}
                       initial={{ opacity: 0, x: -20 }}
@@ -308,6 +327,112 @@ export default function AttendancePage() {
                 来場記録が見つかりませんでした
               </div>
             )}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {filteredRecords.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 glass rounded-2xl p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-xl"
+          >
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                表示件数:
+              </span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="px-3 py-2 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/50 text-gray-900 dark:text-white text-sm"
+              >
+                <option value={10}>10件</option>
+                <option value={20}>20件</option>
+                <option value={50}>50件</option>
+                <option value={100}>100件</option>
+              </select>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {startIndex + 1} - {Math.min(endIndex, filteredRecords.length)} / {filteredRecords.length}件
+              </span>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center gap-2">
+                <motion.button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  whileHover={{ scale: currentPage > 1 ? 1.05 : 1 }}
+                  whileTap={{ scale: currentPage > 1 ? 0.95 : 1 }}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                    currentPage === 1
+                      ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-teal-600 to-green-600 text-white hover:shadow-lg'
+                  }`}
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </motion.button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNumber: number;
+                    if (totalPages <= 5) {
+                      pageNumber = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + i;
+                    } else {
+                      pageNumber = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <motion.button
+                        key={pageNumber}
+                        onClick={() => handlePageChange(pageNumber)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                          currentPage === pageNumber
+                            ? 'bg-gradient-to-r from-teal-600 to-green-600 text-white shadow-lg'
+                            : 'glass text-gray-700 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-teal-900/20'
+                        }`}
+                      >
+                        {pageNumber}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+
+                <motion.button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  whileHover={{ scale: currentPage < totalPages ? 1.05 : 1 }}
+                  whileTap={{ scale: currentPage < totalPages ? 0.95 : 1 }}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                    currentPage === totalPages
+                      ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-teal-600 to-green-600 text-white hover:shadow-lg'
+                  }`}
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </motion.button>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Debug: ページネーション情報（開発時のみ） */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs">
+            <p>Debug: filteredRecords.length = {filteredRecords.length}</p>
+            <p>Debug: totalPages = {totalPages}</p>
+            <p>Debug: currentPage = {currentPage}</p>
+            <p>Debug: itemsPerPage = {itemsPerPage}</p>
+            <p>Debug: loading = {loading ? 'true' : 'false'}</p>
           </div>
         )}
       </div>
