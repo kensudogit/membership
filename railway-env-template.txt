@@ -1,0 +1,50 @@
+# Railway環境変数設定テンプレート
+# 各サービスに対して、以下の環境変数をRailway Dashboardで設定してください
+
+# ============================================
+# eureka-server
+# ============================================
+SPRING_PROFILES_ACTIVE=docker
+
+# ============================================
+# config-server
+# ============================================
+SPRING_PROFILES_ACTIVE=docker
+EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+# ============================================
+# membership-service, payment-service, lesson-service, store-service, integration-service
+# ============================================
+# 以下の [PGHOST], [PGPORT], [PGDATABASE], [PGUSER], [PGPASSWORD] を
+# PostgreSQLサービスの「Variables」タブで確認した実際の値に置き換えてください
+SPRING_PROFILES_ACTIVE=docker
+EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+SPRING_DATASOURCE_URL=jdbc:postgresql://[PGHOST]:[PGPORT]/[PGDATABASE]
+SPRING_DATASOURCE_USERNAME=[PGUSER]
+SPRING_DATASOURCE_PASSWORD=[PGPASSWORD]
+
+# 実例（PostgreSQLサービスの接続情報が以下の場合）:
+# PGHOST: containers-us-west-xxx.railway.app
+# PGPORT: 5432
+# PGDATABASE: railway
+# PGUSER: postgres
+# PGPASSWORD: your-password-here
+#
+# SPRING_DATASOURCE_URL=jdbc:postgresql://containers-us-west-xxx.railway.app:5432/railway
+# SPRING_DATASOURCE_USERNAME=postgres
+# SPRING_DATASOURCE_PASSWORD=your-password-here
+
+# ============================================
+# api-gateway
+# ============================================
+SPRING_PROFILES_ACTIVE=docker
+EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+# ============================================
+# frontend
+# ============================================
+# [api-gatewayの公開URL] を実際のAPI Gatewayサービスの公開URLに置き換えてください
+# 例: https://api-gateway-production.up.railway.app
+NEXT_PUBLIC_API_URL=https://[api-gatewayの公開URL]
+NODE_ENV=production
+
