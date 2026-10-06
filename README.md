@@ -1,6 +1,57 @@
-# 会員管理システム
+# Membership Platform — Enterprise SaaS / Microservices
 
-現代的で包括的な会員管理システムです。
+> **Enterprise Membership SaaS** — 入会・会員証・決済・予約・来場・店舗・分析・外部連携を、Spring Cloudベースのマイクロサービスとして構成した会員管理プラットフォームです。
+>
+> **Stack:** Java 17 · Spring Boot · Spring Cloud · PostgreSQL · Next.js · React · TypeScript · Docker
+
+## Architecture
+
+```text
+Web / Tablet / Mobile
+        │
+        ▼
+     Next.js UI
+        │
+        ▼
+    API Gateway
+        │
+  ┌─────┼───────────────┐
+  ▼     ▼       ▼       ▼
+Member Payment Lesson  Store
+Service Service Service Service
+  │             │
+  ├── Analytics / Integration
+  ├── Eureka Service Discovery
+  └── PostgreSQL
+```
+
+## Enterprise Capabilities
+
+- 会員ライフサイクル管理
+- 会費・商品などの決済管理
+- レッスン予約・出席管理
+- 来場・会員証・QRコード管理
+- 顔認証およびIP制限
+- 多店舗運営・店舗別設定
+- 売上・会員・利用状況分析
+- 外部機器・サービス連携
+- OAuth2 / JWTベースの認証・認可
+- API Gateway / Service Discoveryによる分散サービス構成
+
+## Engineering Focus
+
+- Spring Boot / Spring Cloudによる業務マイクロサービス
+- ドメイン単位のサービス分割
+- API Gatewayによる統合エンドポイント
+- EurekaによるService Discovery
+- PostgreSQLによる業務データ管理
+- Next.js / React / TypeScriptによる管理・利用者UI
+- Docker Composeによる複数サービスのローカル実行
+- Enterprise SaaSに必要な認証・決済・予約・分析の統合
+
+## Portfolio Context
+
+This repository represents the **Enterprise SaaS / Business Systems** track of my portfolio. It demonstrates how multiple business domains can be separated into services while providing a unified user experience through an API gateway and modern web frontend.
 
 ## 機能概要
 
@@ -252,5 +303,3 @@ Docker環境では、環境変数は`docker-compose.yml`で自動設定されま
 ## ライセンス
 
 Copyright © 2024
-
-"# membership" 
